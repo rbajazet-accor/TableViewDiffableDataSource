@@ -40,8 +40,11 @@ public final class TableViewController: UIViewController {
   }
 
   private func setupView() {
-    let cellNib = UINib(nibName: "CompositionFieldTableViewCell", bundle: .main)
-    tableView.register(cellNib, forCellReuseIdentifier: "compositionCellID")
+    let fieldCellNib = UINib(nibName: "CompositionFieldTableViewCell", bundle: .main)
+    tableView.register(fieldCellNib, forCellReuseIdentifier: "compositionFieldCellID")
+    let switchCellNib = UINib(nibName: "CompositionSwitchTableViewCell", bundle: .main)
+    tableView.register(switchCellNib, forCellReuseIdentifier: "compositionSwitchCellID")
+    tableView.delegate = self
 
     let refreshControl = UIRefreshControl()
     refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -50,30 +53,40 @@ public final class TableViewController: UIViewController {
   }
 
   private func makeDataSource() -> UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier> {
-    UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier> (tableView: tableView) { tableView, indexPath, itemIdentifier in
-      switch self.presenter.viewItem(for: itemIdentifier) {
+    TableViewDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
 
+      switch itemIdentifier.type {
       case let .textField(viewItem):
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "compositionCellID", for: indexPath) as? CompositionFieldTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "compositionFieldCellID", for: indexPath) as? CompositionFieldTableViewCell else {
           print("cell not found")
           return nil
         }
-        cell.configure(with: viewItem.title)
+        cell.configure(with: viewItem.title, value: viewItem.value)
         return cell
 
       case .switch:
-        break
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "compositionSwitchCellID", for: indexPath) as? CompositionSwitchTableViewCell else {
+          print("cell not found")
+          return nil
+        }
 
-      default:
-        break
+        return cell
       }
-      return nil
     }
   }
 }
 
+extension TableViewController: UITableViewDelegate {
+  public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "Bye", handler: { _, _, _ in
+      self.presenter.viewDidDelete()
+    })])
+  }
+}
+
+
 extension TableViewController: PersonalInformationPresenterOutput {
-  func displayNames(_ sections: [SectionIdentifier]) {
+  func displayForm(with sections: [SectionIdentifier]) {
     var snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>()
     snapshot.appendSections(sections)
     sections.forEach {
@@ -82,7 +95,7 @@ extension TableViewController: PersonalInformationPresenterOutput {
     diffableDataSource.apply(snapshot)
   }
 
-  func updateNames(_ sections: [SectionIdentifier]) {
+  func updateForm(with sections: [SectionIdentifier]) {
     tableView.refreshControl?.endRefreshing()
 
     var snapshot = NSDiffableDataSourceSnapshot<SectionIdentifier, ItemIdentifier>()
@@ -91,5 +104,11 @@ extension TableViewController: PersonalInformationPresenterOutput {
       snapshot.appendItems($0.itemIdentifiers)
     }
     diffableDataSource.apply(snapshot)
+  }
+}
+
+private class TableViewDataSource: UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier> {
+  override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+    true
   }
 }

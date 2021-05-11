@@ -23,7 +23,8 @@ public final class CompositionFieldTableViewCell: UITableViewCell {
     // Configure the view for the selected state
   }
 
-  public func configure(with title: String) {
+  public func configure(with title: String, value: String) {
     label.text = title
+    textField.text = value
   }
 }

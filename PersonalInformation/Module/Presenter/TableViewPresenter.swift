@@ -18,30 +18,46 @@ struct SectionIdentifier: Hashable {
 
 struct ItemIdentifier: Hashable {
   var id: Int
+  var type: ViewItemType
+
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
 }
 
-struct TextFieldViewItem {
+struct TextFieldViewItem: Equatable {
   var title: String
   var value: String
   var message: String
 }
 
-struct SwitchViewItem {
+struct SwitchViewItem: Equatable {
   var title: String
   var value: Bool
   var message: String
 }
 
-enum ViewItemType {
+enum ViewItemType: Equatable {
   case textField(TextFieldViewItem)
   case `switch`(SwitchViewItem)
+
+  static func == (lhs: ViewItemType, rhs: ViewItemType) -> Bool {
+    switch (lhs, rhs) {
+    case let (.textField(lhsViewItem), .textField(rhsViewItem)):
+      return lhsViewItem == rhsViewItem
+    case let (.switch(lhsViewItem), .switch(rhsViewItem)):
+      return lhsViewItem == rhsViewItem
+    default:
+      return false
+    }
+  }
 }
 
 public final class TableViewPresenter: PersonalInformationPresenterInput {
 
   private let interactor: PersonalInformationInteractorInput
-  weak var output: TableViewController?
-  private var viewItems: [ItemIdentifier: ViewItemType] = [:]
+  weak var output: PersonalInformationPresenterOutput?
+  private var viewItems: [ItemIdentifier] = []
 
   init(interactor: PersonalInformationInteractor) {
     self.interactor = interactor
@@ -55,36 +71,53 @@ public final class TableViewPresenter: PersonalInformationPresenterInput {
     interactor.update()
   }
 
-  func viewItem(for itemIdentifier: ItemIdentifier) -> ViewItemType? {
-    return viewItems[itemIdentifier]
+  func viewDidDelete() {
+    interactor.remove()
   }
 }
 
 extension TableViewPresenter: PersonalInformationInteractorOuput {
-  func load(data: InteractorModel) {
-    viewItems = data.names.reduce(into: [:]) {
-      $0[ItemIdentifier(id: $1.id)] = .textField(TextFieldViewItem(title: $1.name, value: "", message: ""))
+  func load(data: [PersonalInformationCategory]) {
+    viewItems = data.map {
+      switch $0 {
+      case let .firstName(id, value):
+        return ItemIdentifier(id: id, type: .textField(TextFieldViewItem(title: "Prénom", value: value, message: "")))
+      case let .lastName(id, value):
+        return ItemIdentifier(id: id, type: .textField(TextFieldViewItem(title: "Nom", value: value, message: "")))
+      case let .address(id, value):
+        return ItemIdentifier(id: id, type: .textField(TextFieldViewItem(title: "Adresse", value: value, message: "")))
+      case let .russianLaw(id, value):
+        return ItemIdentifier(id: id, type: .switch(SwitchViewItem(title: "Autorisez-vous le transfert de vos données ?", value: value, message: "")))
+      }
     }
-
-    output?.displayNames([SectionIdentifier(id: 0, itemIdentifiers: Array(viewItems.keys))])
+    output?.displayForm(with: [SectionIdentifier(id: 0, itemIdentifiers: viewItems)])
   }
 
-  func update(data: InteractorModel) {
-    viewItems = data.names.reduce(into: [:]) {
-      $0[ItemIdentifier(id: $1.id)] = .textField(TextFieldViewItem(title: $1.name, value: "", message: ""))
+  func update(data: [PersonalInformationCategory]) {
+    viewItems = data.map {
+      switch $0 {
+      case let .firstName(id, value):
+        return ItemIdentifier(id: id, type: .textField(TextFieldViewItem(title: "Prénom", value: value, message: "")))
+      case let .lastName(id, value):
+        return ItemIdentifier(id: id, type: .textField(TextFieldViewItem(title: "Nom", value: value, message: "")))
+      case let .address(id, value):
+        return ItemIdentifier(id: id, type: .textField(TextFieldViewItem(title: "Adresse", value: value, message: "")))
+      case let .russianLaw(id, value):
+        return ItemIdentifier(id: id, type: .switch(SwitchViewItem(title: "Autorisez-vous le transfert de vos données ?", value: value, message: "")))
+      }
     }
-
-    output?.updateNames([SectionIdentifier(id: 0, itemIdentifiers: Array(viewItems.keys))])
+    output?.updateForm(with: [SectionIdentifier(id: 0, itemIdentifiers: viewItems)])
   }
+
 }
 
 protocol PersonalInformationPresenterInput {
   func viewDidLoad()
   func viewRefreshing()
-  func viewItem(for itemIdentifier: ItemIdentifier) -> ViewItemType?
+  func viewDidDelete()
 }
 
 protocol PersonalInformationPresenterOutput: AnyObject {
-  func displayNames(_ sections: [SectionIdentifier])
-  func updateNames(_ sections: [SectionIdentifier])
+  func displayForm(with sections: [SectionIdentifier])
+  func updateForm(with sections: [SectionIdentifier])
 }

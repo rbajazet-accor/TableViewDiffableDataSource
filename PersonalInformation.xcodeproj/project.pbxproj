@@ -20,6 +20,8 @@
 		FF4767B02644275B00BC8EC8 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF4767AF2644275B00BC8EC8 /* UIColor+Extension.swift */; };
 		FF4767B226443AF600BC8EC8 /* TableViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF4767B126443AF600BC8EC8 /* TableViewPresenter.swift */; };
 		FF4767B726443C6800BC8EC8 /* PersonalInformationInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF4767B626443C6800BC8EC8 /* PersonalInformationInteractor.swift */; };
+		FF4767BB264A816400BC8EC8 /* CompositionSwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF4767B9264A816300BC8EC8 /* CompositionSwitchTableViewCell.swift */; };
+		FF4767BC264A816400BC8EC8 /* CompositionSwitchTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FF4767BA264A816300BC8EC8 /* CompositionSwitchTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		FF4767AF2644275B00BC8EC8 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		FF4767B126443AF600BC8EC8 /* TableViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewPresenter.swift; sourceTree = "<group>"; };
 		FF4767B626443C6800BC8EC8 /* PersonalInformationInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInformationInteractor.swift; sourceTree = "<group>"; };
+		FF4767B9264A816300BC8EC8 /* CompositionSwitchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositionSwitchTableViewCell.swift; sourceTree = "<group>"; };
+		FF4767BA264A816300BC8EC8 /* CompositionSwitchTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CompositionSwitchTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +149,8 @@
 			children = (
 				FF4767A92644268000BC8EC8 /* CompositionFieldTableViewCell.swift */,
 				FF4767AA2644268000BC8EC8 /* CompositionFieldTableViewCell.xib */,
+				FF4767B9264A816300BC8EC8 /* CompositionSwitchTableViewCell.swift */,
+				FF4767BA264A816300BC8EC8 /* CompositionSwitchTableViewCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -289,6 +295,7 @@
 				FF476785264424E000BC8EC8 /* LaunchScreen.storyboard in Resources */,
 				FF476782264424E000BC8EC8 /* Assets.xcassets in Resources */,
 				FF476780264424DD00BC8EC8 /* Main.storyboard in Resources */,
+				FF4767BC264A816400BC8EC8 /* CompositionSwitchTableViewCell.xib in Resources */,
 				FF4767AC2644268000BC8EC8 /* CompositionFieldTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,6 +321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FF4767BB264A816400BC8EC8 /* CompositionSwitchTableViewCell.swift in Sources */,
 				FF4767B226443AF600BC8EC8 /* TableViewPresenter.swift in Sources */,
 				FF4767B02644275B00BC8EC8 /* UIColor+Extension.swift in Sources */,
 				FF4767B726443C6800BC8EC8 /* PersonalInformationInteractor.swift in Sources */,
